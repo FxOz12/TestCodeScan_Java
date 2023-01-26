@@ -1,6 +1,6 @@
-import java
+import java;
 
-predicate comparison(BinaryExpr binop, Expr left, Expr right) {
+Predicate comparison(BinaryExpr binop, Expr left, Expr right) {
   (binop instanceof ComparisonExpr or binop instanceof EqualityTest) and
   binop.getLeftOperand() = left and
   binop.getRightOperand() = right
