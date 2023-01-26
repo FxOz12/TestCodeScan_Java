@@ -1,4 +1,4 @@
-public class MyClass {
+class MyClass {
     private String username = "admin";
     private String password = "password";
     
@@ -26,11 +26,5 @@ public class MyClass {
         }
         // use sb.toString()
     }
-    
-    public void vulnerablePathTraversal(String input) {
-        File file = new File(input);
-        if (file.exists()) {
-          // process file
-        }
-    }
+   
 }
