@@ -18,13 +18,13 @@ on:
     # The branches below must be a subset of the branches above
     branches: [ "main" ]
   schedule:
-    - cron: '57 11 * * 4'
+    - cron: '07 12 * * 4'
   workflow_dispatch:  
 
 jobs:
   analyze:
     name: Analyze
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     permissions:
       actions: read
       contents: read
@@ -58,8 +58,8 @@ jobs:
 
     # Autobuild attempts to build any compiled languages  (C/C++, C#, Go, or Java).
     # If this step fails, then you should remove it and run the build manually (see below)
-    - name: Autobuild
-      uses: github/codeql-action/autobuild@v2
+    #- name: Autobuild
+    #  uses: github/codeql-action/autobuild@v2
 
     # ℹ️ Command-line programs to run using the OS shell.
     # 📚 See https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idstepsrun
