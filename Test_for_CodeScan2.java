@@ -1,39 +1,36 @@
-import java
-import semmle.code.java.dataflow.FlowSources
-import semmle.code.java.security.ResponseSplitting
-import DataFlow::PathGraph
-
-class ResponseSplittingConfig extends TaintTracking::Configuration {
-  ResponseSplittingConfig() { this = "ResponseSplittingConfig" }
-
-  override predicate isSource(DataFlow::Node source) {
-    source instanceof RemoteFlowSource and
-    not source instanceof SafeHeaderSplittingSource
-  }
-
-  override predicate isSink(DataFlow::Node sink) { sink instanceof HeaderSplittingSink }
-
-  override predicate isSanitizer(DataFlow::Node node) {
-    node.getType() instanceof PrimitiveType
-    or
-    node.getType() instanceof BoxedType
-    or
-    exists(MethodAccess ma, string methodName, CompileTimeConstantExpr target |
-      node.asExpr() = ma and
-      ma.getMethod().hasQualifiedName("java.lang", "String", methodName) and
-      target = ma.getArgument(0) and
-      (
-        methodName = "replace" and target.getIntValue() = [10, 13] // 10 == "\n", 13 == "\r"
-        or
-        methodName = "replaceAll" and
-        target.getStringValue().regexpMatch(".*([\n\r]|\\[\\^[^\\]\r\n]*\\]).*")
-      )
-    )
-  }
+public class MyClass {
+    private String username = "admin";
+    private String password = "password";
+    
+    public MyClass() {}
+    
+    public void setCredentials(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
+    
+    public void vulnerableSQL(String input) {
+        String query = "SELECT * FROM users WHERE username='" + input + "' AND password='" + this.password + "'";
+        // execute query
+    }
+    
+    public void vulnerableXSS(String input) {
+        String output = "<script>" + input + "</script>";
+        // display output
+    }
+    
+    public void inefficientConstructor(String input) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < input.length(); i++) {
+            sb.append(input.charAt(i));
+        }
+        // use sb.toString()
+    }
+    
+    public void vulnerablePathTraversal(String input) {
+        File file = new File(input);
+        if (file.exists()) {
+          // process file
+        }
+    }
 }
-
-from DataFlow::PathNode source, DataFlow::PathNode sink, ResponseSplittingConfig conf
-where conf.hasFlowPath(source, sink)
-select sink.getNode(), source, sink,
-  "This header depends on a $@, which may cause a response-splitting vulnerability.",
-  source.getNode(), "user-provided value"
